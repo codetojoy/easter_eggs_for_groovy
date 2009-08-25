@@ -13,11 +13,7 @@ class CollectionsTestCase extends GroovyTestCase {
         // pre
         def names = [ 'Beethoven', 'Paganini', 'Bach' ]
         // test
-        def composers = names.collect { n -> 
-            def composer = new Composer()
-            composer.name = n
-            composer
-        }
+        def composers = names.collect { n -> new Composer(name : n) } 
         // post
         assert 3 == composers.size()
         assert 'Bach' == composers[2].name
@@ -71,10 +67,9 @@ class CollectionsTestCase extends GroovyTestCase {
         // pre
         def nums = [1, 3, 5, 7, 9]
         // test
-        def result = nums.inject(0, { val, item -> 
-            val += item
-            val
-        } )
+        // Note the closure implicitly returns the expression, which is fed back in as the new value
+        // for val on next iteration
+        def result = nums.inject(0, { val, item -> val += item } )
         // post
         assert 25 == result
     }
@@ -84,10 +79,9 @@ class CollectionsTestCase extends GroovyTestCase {
         // pre
         def names = [ 'Beethoven', 'Mozart' ]
         // test
-        def result = names.inject("<composers>", { val, item -> 
-            val += "<name>$item</name>"
-            val
-        } )
+        // Note the closure implicitly returns the expression, which is fed back in as the new value
+        // for val on next iteration
+        def result = names.inject("<composers>", { val, item -> val += "<name>$item</name>" } )
         result += "</composers>"
         // post
         assert "<composers><name>Beethoven</name><name>Mozart</name></composers>" == result
