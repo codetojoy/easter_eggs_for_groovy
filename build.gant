@@ -6,32 +6,28 @@ final mainApp = ant.project.properties.'main.app'
 final dataDir = ant.project.properties.'data.dir'
 final groovyHome = ant.project.properties.'groovy.home'
 final groovyEmbeddedJar = groovyHome + ant.project.properties.'groovy.embedded.jar'
+final reportDir = ant.project.properties.'report.dir'
 
 // clean (implicit target)
 includeTargets << gant.targets.Clean
 cleanDirectory << classDir
+cleanDirectory << reportDir
 
 // init
 target( init : '' ) { 
-    path( id : 'run_all.classpath' ) {
+    // contains JUnit and jars for Groovy scripts
+    path( id : 'groovy.classpath' ) {
         pathelement( location : '${classes.dir}' )
-        pathelement( location : "${groovyEmbeddedJar}" )
-        pathelement( location : "${groovyHome}/lib/groovy-1.6-beta-1.jar" )
-        pathelement( location : "${groovyHome}/lib/asm-2.2.3.jar" )
-        pathelement( location : "${groovyHome}/lib/asm-analysis-2.2.3.jar" )
-        pathelement( location : "${groovyHome}/lib/asm-test-2.2.3.jar" )
-        pathelement( location : "${groovyHome}/lib/asm-util-2.2.3.jar" )
-        pathelement( location : "${groovyHome}/lib/antlr-2.7.7.jar" )        
+        pathelement( location : "${groovyEmbeddedJar}" )    
+        ant.fileset( dir : "${groovyHome}/lib") {
+            ant.include( name : '**/*.jar' )
+        }
     }
-    path( id : 'test.classpath' ) {
-        pathelement( location : '${classes.dir}' )
-        pathelement( location : "${groovyEmbeddedJar}" )
-        pathelement( location : "${groovyHome}/groovy-1.6-beta-1/lib/junit-3.8.2.jar" )
-    }    
     path( id : 'build.classpath' ) {
         pathelement( location : '${classes.dir}' )
         pathelement( location : "${groovyEmbeddedJar}")
     }    
+    ant.mkdir( dir : reportDir )
 }
 
 final performCompile = { sourceDir ->
@@ -54,57 +50,79 @@ target( compile : 'compile' ) {
     performCompile( '${test.src.dir}' )
 }
 
-target( test_one : 'execute one test specified by $test.file' ) {
-    depends( compile ) 
-    
-    ant.junit( printsummary:'yes', haltonfailure:'yes' ) {
-        ant.classpath() {
-            ant.pathelement( location : '${classes.dir}')
-            ant.path( refid : 'test.classpath' )
-            ant.fileset( dir : "${groovyHome}/lib") {
-                    ant.include( name : '**/*.jar' )
-            }
-        }
-
-        def test = ant.project.properties.'test.file'
-        def pkg = ant.project.properties.'main.package'
-        ant.test( name : "${pkg}.${test}" ) {}
-    }
-}
-
 target( test : 'execute all tests' ) {
     depends( compile ) 
     
     ant.junit( printsummary:'yes', haltonfailure:'yes' ) {
         ant.classpath() {
-            ant.pathelement( location : '${classes.dir}')
-            ant.path( refid : 'test.classpath' )
-            ant.fileset( dir : "${groovyHome}/lib") {
-                    ant.include( name : '**/*.jar' )
-            }
+            ant.path( refid : 'groovy.classpath' )
         }
 
-        ant.batchtest( fork:'yes' ) {
+        ant.batchtest( fork:'yes', todir:"${reportDir}" ) {
+            formatter(type:'plain')
             ant.fileset( dir : classDir ) {
                 ant.include( name : '**/*Test*.*' )
                 // we don't want to test inner closure classes!
-                ant.exclude( name : '**/*_closure*.*')
+                ant.exclude( name : '**/*_closure*.*')                
             }
         } 
     }
 }
 
-// runs one file $data.dir, specified by $data.file
-target( run : 'run main app' ) {
+// obsolete? 
+target( test_one : 'execute one test specified by $test.file' ) {
     depends( compile ) 
     
-    ant.java( classname:"${mainApp}" ) {
+    ant.junit( printsummary:'yes', haltonfailure:'yes') {
         ant.classpath() {
-            ant.pathelement( location : '${classes.dir}')
-            ant.path( refid : 'run_all.classpath' )
+            ant.path( refid : 'groovy.classpath' )
+        }
+
+        def test = ant.project.properties.'test.file'
+        def pkg = ant.project.properties.'main.package'
+        ant.test( name : "${pkg}.${test}", outfile:"${reportDir}/junit_report") {
+            formatter(type:'plain')
         }
     }
 }
 
-setDefaultTarget( test )
+final runOneFile = { dataFile ->
+    def errorLog = new File("error.log")
+    errorLog.delete()
+
+    ant.java( classname:"${mainApp}" ) {
+        ant.classpath() {
+            ant.pathelement( location : '${classes.dir}')
+            ant.path( refid : 'groovy.classpath' )
+        }
+        ant.arg( value: dataFile )
+    }
+
+    if (errorLog.exists()) {
+        ant.fail(message : "found error.log for file: $dataFile")
+    }    
+}
+
+// runs one file $data.dir, specified by $data.file
+target( run : 'run app for file in $data.dir, specified by $data.file' ) {
+    depends( compile ) 
+    
+    def file = ant.project.properties.'data.file'
+    def dataFile = new File(dataDir + "/" + file)
+    
+    runOneFile(dataFile)
+}
+
+// runs each data file in $data.dir
+target( run_all : 'run app for each data file in $data.dir' ) {
+    depends( compile ) 
+        
+    new File(dataDir).eachFile { dataFile ->
+        runOneFile(dataFile)
+    }    
+    
+    echo( message : "all tests SUCCESSFUL")
+}
+
+setDefaultTarget( run_all )
 
