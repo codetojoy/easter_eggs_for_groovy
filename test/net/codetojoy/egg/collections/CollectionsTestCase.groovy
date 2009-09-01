@@ -69,6 +69,7 @@ class CollectionsTestCase extends GroovyTestCase {
         // test
         // Note the closure implicitly returns the expression, which is fed back in as the new value
         // for val on next iteration
+        // Note: there is a sum() method on collections. This is an easy example of inject()
         def result = nums.inject(0, { val, item -> val += item } )
         // post
         assert 25 == result

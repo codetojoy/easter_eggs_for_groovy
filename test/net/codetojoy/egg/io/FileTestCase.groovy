@@ -2,6 +2,19 @@
 package net.codetojoy.egg
 
 class FileTestCase extends GroovyTestCase {
+        
+    def phraseFile = new File("data/Phrase.txt")
+    
+    void testFileCopy() {
+        // pre
+        def targetFile = new File("data/PhraseCopy.txt")
+        targetFile.delete()
+        // test
+        targetFile.withWriter { it.write( phraseFile.getText() ) }
+        // post
+        assert targetFile.exists()
+        assert phraseFile.size() == targetFile.size()
+    }
     
     void testWritingChinese() {
         // pre
