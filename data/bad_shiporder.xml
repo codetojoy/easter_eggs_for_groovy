@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- from http://www.w3schools.com/schema/schema_example.asp -->
+
+<shiporder orderid="889923"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="shiporder.xsd">
+  <IllegalTag>John Smith</IllegalTag>
+</shiporder>
