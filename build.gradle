@@ -10,16 +10,3 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-/*
-repositories {
-    mavenCentral()
-}
-
-dependencies {    
-    // testCompile group: 'junit', name: 'junit', version: '4.10'
-    
-    compile group: 'org.codehaus.groovy', name: 'groovy', version: '2.4.5'
-    testCompile group: 'org.codehaus.groovy', name: 'groovy', version: '2.4.5'
-}
-*/
-
