@@ -9,7 +9,7 @@ class RegExTestCase extends GroovyTestCase {
         // test
         def m = (str =~ /.*Jen.*/)
 
-        assert false == m.matches()
+        assert true == m.matches()
     }
 
     void testCaseInsensitive() {
