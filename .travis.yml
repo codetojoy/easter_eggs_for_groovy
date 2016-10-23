@@ -1,1 +1,12 @@
 language: groovy
+
+sudo: required
+
+notifications:
+    email: false
+
+before_install:
+    - wget http://services.gradle.org/distributions/gradle-2.14.1-bin.zip
+    - unzip gradle-2.14.1-bin.zip
+    - export GRADLE_HOME=$PWD/gradle-2.14.1
+    - export PATH=$GRADLE_HOME/bin:$PATH
