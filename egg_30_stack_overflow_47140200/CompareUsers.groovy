@@ -64,10 +64,10 @@ def compareUsers = { resp1, resp2 ->
     def result = true
 
     if (resp1.size() == resp2.size()) {
-        def userPairs = [resp1, resp2].transpose()
-        userPairs.each { pair ->
-            def user1 = pair[0]
-            def user2 = pair[1]
+        // assumes that the lists are sorted !!
+        [resp1, resp2].transpose().each {
+            def user1 = it[0]
+            def user2 = it[1]
             if (result) {
                 result = compareUser(user1, user2)
             }
