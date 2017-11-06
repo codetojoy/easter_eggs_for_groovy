@@ -31,7 +31,7 @@ def respStr2 = '''
       "tempId": 101998,
    },
 {
-      "name": "EfGH",
+      "name": "EFGH",
       "user": "TEMP_USER",
       "description": null,
       "createdtime": "2017-11-05 11:11:18",
@@ -66,10 +66,10 @@ def compareUsers = { resp1, resp2 ->
     if (resp1.size() == resp2.size()) {
         // assumes that the lists are sorted !!
         [resp1, resp2].transpose().each {
-            def user1 = it[0]
-            def user2 = it[1]
+            def userInfo1 = buildUserInfo(it[0])
+            def userInfo2 = buildUserInfo(it[1])
             if (result) {
-                result = compareUser(user1, user2)
+                result = compareUser(userInfo1, userInfo2)
             }
         }
     } else { 
