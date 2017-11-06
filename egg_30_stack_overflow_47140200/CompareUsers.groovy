@@ -65,9 +65,6 @@ def compareUsers = { resp1, resp2 ->
 
     if (resp1.size() == resp2.size()) {
         def userPairs = [resp1, resp2].transpose()
-        // def userInfos1 = resp1.collect { buildUserInfo(it) }
-        // def userInfos2 = resp2.collect { buildUserInfo(it) }
-        // def userInfoPairs = [userInfos1, userInfos2].transpose()
         userPairs.each { pair ->
             def user1 = pair[0]
             def user2 = pair[1]
