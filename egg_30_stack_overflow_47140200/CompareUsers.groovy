@@ -69,7 +69,7 @@ def compareUsers = { resp1, resp2 ->
             def user1 = pair[0]
             def user2 = pair[1]
             if (result) {
-                result = compareUser(pair[0], pair[1])
+                result = compareUser(user1, user2)
             }
         }
     } else { 
