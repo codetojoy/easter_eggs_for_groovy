@@ -1,0 +1,15 @@
+
+apply plugin: 'groovy'
+apply plugin: 'application'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.13'
+
+    testCompile 'junit:junit:4.12'
+}
+
+mainClassName = "GameMatrix"
