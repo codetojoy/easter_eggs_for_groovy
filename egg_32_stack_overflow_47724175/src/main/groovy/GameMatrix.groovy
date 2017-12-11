@@ -7,45 +7,46 @@
 
 class GameMatrix {
 
-   final PlayerTuple tl, tr, bl, br
+    final PlayerTuple tl, tr, bl, br
 
-   GameMatrix(PlayerTuple tl,tr,bl,br) {
-      assert tl && tr && bl && br
-      this.tl = tl; this.tr = tr
-      this.bl = bl; this.br = br
-   }
+    GameMatrix(PlayerTuple tl,tr,bl,br) {
+        assert tl && tr && bl && br
+        this.tl = tl; this.tr = tr
+        this.bl = bl; this.br = br
+    }
 
-   GameMatrix colExchange() {
-      return new GameMatrix(tr,tl,br,bl)
-   }
+    GameMatrix colExchange() {
+        return new GameMatrix(tr,tl,br,bl)
+    }
 
-   GameMatrix rowExchange() {
-      return new GameMatrix(bl,br,tl,tr)
-   }
+    GameMatrix rowExchange() {
+        return new GameMatrix(bl,br,tl,tr)
+    }
 
-   GameMatrix playerExchange() {
-      return new GameMatrix(tl.flip(),bl.flip(),tr.flip(),br.flip())
-   }
+    GameMatrix playerExchange() {
+        return new GameMatrix(tl.flip(),bl.flip(),
+                              tr.flip(),br.flip())
+    }
 
-   GameMatrix mirror() {
+    GameMatrix mirror() {
       // columnEchange followed by rowExchange
       return new GameMatrix(br,bl,tr,tl)
-   }
+    }
 
-   String toString() {
+    String toString() {
       return "[ ${tl},${tr} | ${bl},${br} ]"
-   }
+    }
 
-   boolean equals(def o) {
+    boolean equals(def o) {
       if (!(o && o instanceof GameMatrix)) {
          return false
       }
       return tl == o.tl && tr == o.tr && bl == o.bl && br == o.br
-   }
+    }
 
-   int hashCode() {
+    int hashCode() {
       return (( tl.hashCode() * 16 + tr.hashCode() ) * 16 + bl.hashCode() ) * 16 + br.hashCode()     
-   }
+    }
 
     // Check whether a GameMatrix can be mapped to a member of the "canonicals", the set of 
     // equivalence class representatives, using a reduced set of transformations. Technically,
@@ -62,17 +63,14 @@ class GameMatrix {
 
        def chain = "player"
        if (q.tl.a == 4) {
-       }
-       else if (q.tr.a == 4) {
-          q = q.colExchange(); chain = "column ∘ ${chain}"
-       }
-       else if (q.bl.a == 4) {
-          q = q.rowExchange(); chain = "row ∘ ${chain}"
-       }
-       else if (q.br.a == 4) {
-          q = q.mirror(); chain = "mirror ∘ ${chain}"
-       }
-       else {
+            // no-op
+       } else if (q.tr.a == 4) {
+            q = q.colExchange(); chain = "column ∘ ${chain}"
+       } else if (q.bl.a == 4) {
+            q = q.rowExchange(); chain = "row ∘ ${chain}"
+       } else if (q.br.a == 4) {
+            q = q.mirror(); chain = "mirror ∘ ${chain}"
+       } else {
           assert false : "Can't happen"
        }
        assert q.tl.a == 4
@@ -97,6 +95,8 @@ class GameMatrix {
                            new PlayerTuple(payoffs_playerA[1], payoffs_playerB[2]),
                            new PlayerTuple(payoffs_playerA[2], payoffs_playerB[3])
                       )
+             def q = gm.playerExchange()
+
              def ( c, chain ) = dupCheck(gm,canonicals)
              if (c) {
                 System.out << "${gm} equivalent to ${c} via ${chain}\n"
