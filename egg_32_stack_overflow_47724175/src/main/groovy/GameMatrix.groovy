@@ -95,7 +95,6 @@ class GameMatrix {
                            new PlayerTuple(payoffs_playerA[1], payoffs_playerB[2]),
                            new PlayerTuple(payoffs_playerA[2], payoffs_playerB[3])
                       )
-             def q = gm.playerExchange()
 
              def ( c, chain ) = dupCheck(gm,canonicals)
              if (c) {
