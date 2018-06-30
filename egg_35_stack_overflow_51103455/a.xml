@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composer>
+  <name>Wolfgang Mozart</name>
+  <born>1756</born>
+  <notes>
+    <note1>foo</note1>
+    <note2>bar</note2>
+  </notes>
+</composer>
