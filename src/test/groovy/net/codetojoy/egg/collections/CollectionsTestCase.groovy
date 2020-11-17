@@ -111,5 +111,20 @@ class CollectionsTestCase extends GroovyTestCase {
         assert "Chopin" == sortedList[1].name
         assert "Mozart" == sortedList[3].name
     }
-    
+
+    void testFindResults() {
+        def composers = []
+        composers << new Composer(name : 'Beethoven', era : 'Romantic')
+        composers << new Composer(name : 'Mozart', era : 'Classical')
+        composers << new Composer(name : 'Chopin', era : 'Romantic')
+        composers << new Composer(name : 'Haydn', era : 'Classical')
+
+        // test
+        def results = composers.findResults { c -> 
+            (c.era == 'Classical') ? c.name : null 
+        }
+
+        assert "Mozart" == results[0]
+        assert "Haydn" == results[1]
+    }
 }
