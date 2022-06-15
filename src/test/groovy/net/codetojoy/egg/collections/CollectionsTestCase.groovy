@@ -18,6 +18,16 @@ class CollectionsTestCase extends GroovyTestCase {
         assert 3 == composers.size()
         assert 'Bach' == composers[2].name
     }
+
+    void testCollectMany() {
+        def names = [ 'Beethoven', 'Paganini', 'Bach' ]
+        def seededList = [new Composer(name: 'Mozart')]
+
+        // test
+        def composers = names.collectMany(seededList, { n -> [new Composer(name : n)] }) 
+
+        assert 4 == composers.size()
+    }
         
     void testFind() {
         def players = [ [name:'Randy', guitar:'Jackson'], [name:'Eddie', guitar:'Frankenstrat'], [name:'Slash', guitar:'Les Paul'] ]
